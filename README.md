@@ -7,10 +7,10 @@ workshop on [Numpy](www.numpy.org).
 
 If you are using a scientific Python distribution like
 [Anaconda](https://docs.continuum.io/anaconda/) or
-[Canopy](https://www.enthought.com/products/canopy/) you will already
-have Numpy.  If you have a bare Python distribution or for some reason
-need to reinstall or upgrade your Numpy installation, you can use pip
-on the command line:
+[Canopy](https://www.enthought.com/products/canopy/) you already have
+Numpy.  If you have a bare Python distribution or for some reason need
+to reinstall or upgrade your Numpy installation, you can use pip on
+the command line:
 
 ```
 pip install numpy --upgrade
