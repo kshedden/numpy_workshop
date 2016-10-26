@@ -468,19 +468,24 @@ y = x.T
 
 ## Additional topics
 
-* Counting with bincount and unique
+* Counting with
+  [bincount](https://docs.scipy.org/doc/numpy/reference/generated/numpy.bincount.html)
+  and
+  [unique](https://docs.scipy.org/doc/numpy/reference/generated/numpy.unique.html)
 
-* Time, string and object dtypes
+* [Time](https://docs.scipy.org/doc/numpy/reference/arrays.datetime.html),
+  [string](https://docs.scipy.org/doc/numpy/reference/routines.char.html)
+  and object dtypes
 
-* Searching with searchsorted
+* Searching with [searchsorted](https://docs.scipy.org/doc/numpy/reference/generated/numpy.searchsorted.html#numpy.searchsorted)
 
-* Set operations
+* [Set operations](https://docs.scipy.org/doc/numpy-1.11.0/reference/routines.set.html)
 
-* Data type reinterpreation with "view"
+* Data type reinterpreation with [view](https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.view.html)
 
-* Output parameters
+* Out parameters
 
-* Einstein summation
+* [Einstein summation](https://docs.scipy.org/doc/numpy-1.10.0/reference/generated/numpy.einsum.html)
 
 ## Limitations and future directions
 
