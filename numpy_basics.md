@@ -7,8 +7,8 @@ structures in Numpy such as the
 [matrix](https://docs.scipy.org/doc/numpy/reference/generated/numpy.matrix.html),
 and the
 [recarray](https://docs.scipy.org/doc/numpy/reference/generated/numpy.recarray.html).
-But these are mainly used in very narrow situations.  Here we focus
-only on the widely-used ndarray type.
+But these are mainly used in relatively narrow situations.  Here we
+focus only on the widely-useful ndarray data structure.
 
 First, since numpy is a library we need to import it.
 
@@ -16,13 +16,13 @@ First, since numpy is a library we need to import it.
 import numpy as np
 ```
 
-### Construction and dtypes
+### Ndarray construction and dtypes
 
 An ndarray is a homogeneous rectangular data structure with an
 arbitrary number of axes. Being "homogeneous" means that all data
 values in an ndarray must have the same data type. Numpy supports many
-data types. In the following cell, we create a 1-dimensional literal
-ndarray with double precision floating point (8 byte float) values:
+data types. Below, we create a 1-dimensional literal ndarray with
+double precision floating point (8 byte float) values:
 
 ```
 x = np.asarray([4, 1, 5, 4, 7, 3, 0], dtype=np.float64)
@@ -72,20 +72,22 @@ y = np.random.normal(size=(5, 3))
 z = np.concatenate((x, y), axis=1)
 ```
 
-Note that concatenate preserves the number of axes.  If you want to
-"stack" ndarray objects to create a new object with an additional
-axis, use one of the stack functions:
+Note that concatenate preserves the number of axes, i.e. in the
+examples above, we combine arrays with two axes, and the result also
+has two axes.  If you want to "stack" ndarray objects to create a new
+object with one more axis than the things being combined, use one of
+the stack functions:
 
 ```
-np.vstack((np.zeros(5), np.ones(5)))
+w = np.vstack((np.zeros(5), np.ones(5)))
 
-np.dstack((np.zeros(5), np.ones(5)))
+z = np.dstack((np.zeros(5), np.ones(5)))
 ```
 
 We can create a new array with the same data as another array, but
-with a different shape.  The new array must have the same overall size
-as the array it is reshaped from.  The reshaped array is filled in
-row-wise (i.e. the last index moves fastest):
+with a different shape.  The new array must have the same total number
+of elements as the array it is reshaped from.  The reshaped array is
+filled in row-wise (i.e. the last index moves fastest):
 
 ```
 x = np.arange(10)
@@ -98,7 +100,7 @@ construct larger arrays out of components.
 ### Indexing and slicing
 
 We can index and slice an ndarray just like we index and slice a
-Python list:
+Python list.  But note that the index positions start at 0, not 1.
 
 ```
 w = x[2]
@@ -120,9 +122,10 @@ ix = np.asarray([0, 3, 3, 5])
 z = x[ix]
 ```
 
-These two types of indexing can be used to select elements from an
-ndarray.  For example, if we want to retain only the positive elements
-of an ndarray, we can use either of the following approaches:
+Boolean and position-based indexing can be used to select elements
+from an ndarray with some desired characteristic.  For example, if we
+want to retain only the positive elements of an ndarray, we can use
+either of the following approaches:
 
 
 ```
@@ -154,8 +157,8 @@ z = x[ix, :]
 ## Functions and methods in Numpy
 
 Some of the functionality of Numpy is implemented as functions, and
-some of it is implemented as methods.  Some operations are implemented
-as both functions and as methods:
+some of it is implemented as methods.  Some commonly-used operations
+are implemented as both functions and as methods:
 
 ```
 x = np.random.normal(size=(4, 3))
@@ -221,8 +224,9 @@ q = ma.median(x, 1) # there is no x.median(1)
 ## Basic arithmetic
 
 The standard arithmetic operators (+, -, *, /, **, %) in Numpy all
-behave in a pointwise (element-wise) fashion.  The most basic use of
-these operators is to combine two ndarray objects with the same shape:
+behave in a pointwise (element-wise) fashion.  The most typical use of
+these operators is to combine two ndarray objects that have the same
+shape, producing a result that has the same shape as the two operands:
 
 ```
 x = np.random.normal(size=(4, 2))
@@ -231,7 +235,7 @@ z = x + y
 ```
 
 Note that these operations all have an in-place version that may
-perform slightly better.
+have slightly better efficiency.
 
 ```
 x = np.random.normal(size=(4, 2))
@@ -298,18 +302,18 @@ In this situation, the axis with extent 1 is replicated to match the
 same axis in the other array.
 
 Now we return to the centering of columns.  If x has shape (m, n),
-x.mean(0) has shape (n,).  Following the broadcasting rules above,
-arrays of shape (m, n) and (n,) can be broadcasted.  The effect of
-this is that the values in x.mean(0) are subtracted from each row of
-x, centering the data by columns.
+then x.mean(0) has shape (n,).  Following the broadcasting rules
+above, arrays of shape (m, n) and (n,) can be broadcasted.  The effect
+of this is that the values in x.mean(0) are subtracted from each row
+of x, centering the data by columns.
 
-When centering columns as shown above, we centered the data by
+When centering rows as shown above, we centered the data by
 subtracting x.mean(1)[:, None] from x.  The shape of x.mean(1) is (m,)
-but this is not broadcastable with (m, n) (they do not agree in the
-training dimensions).  The trick here is to add an axis of extent 1:
-x.mean(1)[:, None] has shape (m, 1).  The axis with length 1 is
-expanded to length n by replicating the values along the second
-dimension.
+but this is not broadcastable with an array of shape (m, n) (the two
+shapes do not agree in their trailing dimensions).  The trick here is
+to add an axis of extent 1 using a "None" indexer: x.mean(1)[:, None]
+has shape (m, 1).  The axis with length 1 is then expanded to length n
+by replicating the values along the newly-created second dimension.
 
 ## Pointwise functions
 
@@ -354,24 +358,24 @@ x = np.random.normal(size=10)
 x.sort()
 ```
 
-If you want to preserve the original array, you can use the `sort`
-method:
+If you want to preserve the original array, you can use the sort
+function:
 
 ```
 x = np.random.normal(size=10)
 y = np.sort(x)
 ```
 
-You can sort multidimensional arrays in-place:
+You can sort multidimensional arrays in-place along a given axis:
 
 ```
 x = np.random.normal(size=(5, 2))
 x.sort(0)
 ```
 
-If you want to sort indirectly, use argsort.  After the following code
-is run, x is unchanged, but x[ix] would be identical to the result of
-np.sort(x).
+If you want to sort indirectly, use the argsort function.  After the
+following code is run, x is unchanged, but x[ix] would be identical to
+the result of np.sort(x).
 
 ```
 x = np.random.normal(size=10)
@@ -382,9 +386,9 @@ ix = np.argsort(x)
 
 Slicing operations sometimes result in a reference into the parent
 array.  In this case, since memory is shared between the slice and its
-parent, changing the data in the slice propogates to the parent
-object.  For example, in the following code, after changing an element
-in y, the state of x is also changed:
+parent, changing the data in the slice also alters the parent object.
+For example, in the following code, after changing an element in y,
+the state of x is also changed:
 
 ```
 x = np.arange(10)
@@ -478,7 +482,7 @@ y = x.T
 
 * Einstein summation
 
-## Limitations
+## Limitations and future directions
 
 Numpy is arguably the "best in class" for what it is: an interpreted
 array processing language that uses contiguous blocks of memory to
@@ -487,25 +491,24 @@ compared to the array processing capabilities in other languages,
 Numpy is exceedingly powerful in terms of the range of data types that
 it supports, its flexible broadcasting and reshaping capabilities, and
 its use of strides and other flexible indexing models to permit
-complex operations with minimal data copying.
+complex operations with minimal data copying and indexing overhead.
 
 However there are some fundamental limitations to Numpy's design, and
 in recent years there has been a lot of interest in devising the next
-generation or successor to Numpy.
-
-There are two main two limitations to Numpy.  One is that since arrays
-are stored in contiguous memory chunks, it cannot easily handle very
-large arrays.  There are various work-arounds, but this is a
+generation or successor to Numpy.  Two main limitations of Numpy are
+commonly noted.  One limitation is that since arrays are stored in
+contiguous memory chunks, Numpy cannot easily handle very large
+arrays.  There are various work-arounds to address this, but it is a
 significant problem.
 
-The other major issue is that since the code is executed partially by
-the python interpreter and partially by the Numpy library, it is hard
-to avoid unecessary copies.  For example, when executing the code
-below, a new allocation is made to store the result of x + y, then
-this new allocation is assigned to x.  The original allocation of x
-looses a reference count and can be garbage collected, but it would be
-better to recycle the original memory allocation of x and avoid the
-extra allocation entirely.
+The other major limitation of Numpy's design is that since the code is
+executed partially by the Python interpreter and partially by the
+Numpy library, it is hard to avoid unecessary copies of data.  For
+example, when executing the code below, a new allocation is made to
+store the result of x + y, then this new allocation is assigned to x.
+The original allocation of x looses a reference count and can be
+garbage collected, but it would be better to recycle the original
+memory allocation of x and avoid the extra allocation entirely.
 
 ```
 x = x + y
@@ -513,13 +516,13 @@ x = x + y
 
 A number of powerful tools have been developed to either augment or
 supplant Numpy in numeric data processing.  For example, to address
-the issue of excess copying, the
+the issue of excess data copying, the
 [Numexpr](https://github.com/pydata/numexpr) package takes expressions
 written as strings and evaluates them in a virtual machine that can
 apply a variety of accelerations.  For example, by passing "sum(x *
-y)" to the virtual machine, it can be automatically be determined that
-the sum can be calculated in streaming fashion without explicitly
-forming `x * y`.
+y)" to the Numexpr virtual machine, it can be automatically be
+determined that the sum can be calculated in streaming fashion without
+explicitly forming x * y.
 
 Other relevant projects include [Numba](http://numba.pydata.org/),
 which uses just-in-time compilation to bypass the Python interpreter,
