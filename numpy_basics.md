@@ -45,10 +45,10 @@ An ndarray can have multiple axes (dimensions):
 
 ```
 x = np.zeros((4, 3))
-```
 
-```
-x = np.zeros((4, 3, 2))
+y = np.zeros((4, 3, 2))
+
+z = np.asarray([[1, 2, 3], [2, 3, 4]])
 ```
 
 To determine the shape of an ndarray, use the shape attribute:
@@ -56,6 +56,40 @@ To determine the shape of an ndarray, use the shape attribute:
 ```
 x = np.random.normal(size=(3, 2))
 x.shape # returns a tuple (3, 2)
+```
+
+### Combining and reshaping
+
+The concatenate function concatenates arrays either horizontally or vertically:
+
+```
+x = np.random.normal(size=(5, 2))
+y = np.random.normal(size=(7, 2))
+z = np.concatenate((x, y), axis=0)
+
+x = np.random.normal(size=(5, 2))
+y = np.random.normal(size=(5, 3))
+z = np.concatenate((x, y), axis=1)
+```
+
+Note that concatenate preserves the number of axes.  If you want to
+"stack" ndarray objects to create a new object with an additional
+axis, use one of the stack functions:
+
+```
+np.vstack((np.zeros(5), np.ones(5)))
+
+np.dstack((np.zeros(5), np.ones(5)))
+```
+
+We can create a new array with the same data as another array, but
+with a different shape.  The new array must have the same overall size
+as the array it is reshaped from.  The reshaped array is filled in
+row-wise (i.e. the last index moves fastest):
+
+```
+x = np.arange(10)
+x = np.reshape(x, (5, 2))
 ```
 
 ### Indexing and slicing
@@ -83,14 +117,16 @@ ix = np.asarray([0, 3, 3, 5])
 z = x[ix]
 ```
 
-We can do elementwise arithmetic using numpy arrays as long as they
-are conformable (or can be broadcast to be conformable, as discussed
-below). Note that numerical types are "upcast" (in the example below,
-use z.dtype to get the type of z).
+These two types of indexing can be used to select elements from an
+ndarray.  For example, if we want to retain only the positive elements
+of an ndarray, we can use either of the following approaches:
+
 
 ```
-y = np.asarray([0, 1, 0, -1, 1, 1, -2], dtype=np.float64)
-z = x + y
+z = z[z> 0]
+
+ix = np.flatnonzero(z > 0)
+z = z[ix]
 ```
 
 Slicing an ndarray with multiple dimensions is straightforward:
@@ -99,6 +135,17 @@ Slicing an ndarray with multiple dimensions is straightforward:
 x = np.random.normal(size=(3, 4))
 w = x[1, :]
 z = x[1:3, 2:4]
+```
+
+We can also use boolean and index vectors with multidimensional arrays:
+
+```
+x = np.random.normal(size=(10, 3))
+b = x[:, 0] > 0
+z = x[b, :]
+
+ix = np.flatnonzero(x[:, 0] > 0)
+z = x[ix, :]
 ```
 
 ## Functions and methods in Numpy
@@ -283,3 +330,88 @@ u,s,vt = np.linalg.svd(x, 0)
 y = np.random.normal(size=3)
 r = np.linalg.solve(xtx, y)
 ```
+
+## References and copies
+
+Slicing operations sometimes result in a reference into the parent
+array.  In this case, since memory is shared between the slice and its
+parent, changing the data in the slice propogates to the parent
+object.  For example, in the following code, after changing an element
+in y, the state of x is also changed:
+
+```
+x = np.arange(10)
+y = x
+y[3] = 99
+```
+
+This can also happen with slices
+
+```
+x = np.arange(10)
+y = x[3:8]
+y[3] = 99
+```
+
+A slice with a stride may also return a view:
+
+```
+x = np.arange(10)
+y = x[2:10:2]
+y[3] = 99
+```
+
+But an arbitrary selection of values is a copy:
+
+```
+x = np.arange(10)
+y = x[[0, 3, 4, 5]]
+y[3] = 99
+```
+
+References are often a useful way to improve performance, or to
+simplify the implementation of complex algorithms.  However, if you do
+not want a reference, you can force a copy to be made with the copy
+method:
+
+```
+x = np.arange(10)
+y = x[3:8].copy()
+y[3] = 99
+```
+
+## Internal structure of ndarray objects
+
+The canonical state of an ndarray is a contiguous block of memory with
+the data packed consecutively.  This means that the "stride" (the
+number of bytes from the start of one element to the next) is the same
+as the "itemsize" (the number of bytes used to store each element).
+You can get some information about the memory layout of an array via
+some of its attributes:
+
+```
+x = np.arange(5)
+
+x.dtype
+x.itemsize
+x.strides
+x.flags
+```
+
+If the array was obtained by slicing or reshaping (e.g. transposing)
+another array, it may not have this "canonical" layout.  For example,
+compare the "strides" attribute of x and y below:
+
+```
+x = np.arange(10)
+y = x[::2]
+```
+
+Strides can also be used to allow a reshaped array (e.g. a transpose)
+to share memory with the array it was obtained from:
+
+```
+x = np.random.normal(size=(3, 2))
+y = x.T
+```
+

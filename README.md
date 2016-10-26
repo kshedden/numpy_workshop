@@ -5,4 +5,4 @@ workshop on [Numpy](www.numpy.org).
 
 ## Numpy resources
 
-[50 Numpy exercises](https://github.com/rougier/numpy-100/blob/master/100%20Numpy%20exercises.md)
+[100 Numpy exercises](https://github.com/rougier/numpy-100/blob/master/100%20Numpy%20exercises.md)
