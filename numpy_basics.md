@@ -8,7 +8,7 @@ structures in Numpy such as the
 and the
 [recarray](https://docs.scipy.org/doc/numpy/reference/generated/numpy.recarray.html).
 But these are mainly used in very narrow situations.  Here we focus
-only on ndarray objects.
+only on the widely-used ndarray type.
 
 First, since numpy is a library we need to import it.
 
@@ -16,10 +16,12 @@ First, since numpy is a library we need to import it.
 import numpy as np
 ```
 
+### Construction and dtypes
+
 An ndarray is a homogeneous rectangular data structure with an
-arbitrary number of axes. Being "homogeneous" means all data values in
-an ndarray must have the same data type. Numpy supports many data
-types. In the following cell, we create a 1-dimensional literal
+arbitrary number of axes. Being "homogeneous" means that all data
+values in an ndarray must have the same data type. Numpy supports many
+data types. In the following cell, we create a 1-dimensional literal
 ndarray with double precision floating point (8 byte float) values:
 
 ```
@@ -32,12 +34,24 @@ Since the data are all integers, we could have used an integer data type instead
 x = np.asarray([4, 1, 5, 4, 7, 3, 0], dtype=np.int64)
 ```
 
-We can even store them as single byte values, since none of the values
-exceeds 255:
+We could even store the data as single byte values, since none of the
+values exceeds 255:
 
 ```
 x = np.asarray([4, 1, 5, 4, 7, 3, 0], dtype=np.uint8)
 ```
+
+An ndarray can have multiple axes (dimensions):
+
+```
+x = np.zeros((4, 3))
+```
+
+```
+x = np.zeros((4, 3, 2))
+```
+
+### Indexing and slicing
 
 We can index and slice an ndarray just like we index and slice a
 Python list:
@@ -64,22 +78,12 @@ z = x[ix]
 
 We can do elementwise arithmetic using numpy arrays as long as they
 are conformable (or can be broadcast to be conformable, but that is a
-more advanced topic). Note that numerical types are "upcast" (use
-`z.dtype` to get the type of z).
+more advanced topic). Note that numerical types are "upcast" (in the
+example below, use `z.dtype` to get the type of z).
 
 ```
 y = np.asarray([0, 1, 0, -1, 1, 1, -2], dtype=np.float64)
 z = x + y
-```
-
-An ndarray can have multiple axes (dimensions):
-
-```
-x = np.zeros((4, 3))
-```
-
-```
-x = np.zeros((4, 3, 2))
 ```
 
 Slicing an ndarray with multiple dimensions is straightforward:
@@ -93,8 +97,8 @@ x[1:3, 2:4]
 ## Functions and methods in Numpy
 
 Some of the functionality of Numpy is implemented as functions, and
-some is implemented as methods.  Moreover, some operations are
-implemented as both functions and as methods:
+some is implemented as methods.  Some operations are implemented as
+both functions and as methods:
 
 ```
 x = np.random.normal(size=(4, 3))
@@ -108,7 +112,7 @@ s2 = x.sum()   # a method that does the same thing
 
 A reducing operation reduces the number of axes of an array, by
 applying a function along one axis that combines the values. Here are
-some basic summarizations along the columns:
+some basic summarization operations along the columns:
 
 ```
 x = np.random.normal(size=(4, 3))
@@ -119,10 +123,10 @@ n = x.min(0)
 p = x.prod(0)
 ```
 
-The results of all these operations will have shape `(3,)`.  The
-argument `0` to the method implies that the input array (`x`) is
-reduced along axis 0 (the first axis).  We can also reduce by applying
-a function along the rows:
+The results of all these operations will have shape (3,).  The
+argument 0 to the method implies that the input array (x) is reduced
+along axis 0 (the first axis).  We can also reduce by applying a
+function along the rows:
 
 ```
 s = x.sum(1)
@@ -157,7 +161,7 @@ these operators is to combine two ndarray objects with the same shape.
 Numpy also supports a form of *broadcasting*, allowing objects with
 different shapes to be combined in limited situations.  The most
 common use-cases for broadcasting are to center or standardize rows or
-columns of an ndarray with two axes:
+columns of an ndarray.
 
 ```
 x = np.random.normal(size=(100, 5))
