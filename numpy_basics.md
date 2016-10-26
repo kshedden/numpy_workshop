@@ -92,6 +92,9 @@ x = np.arange(10)
 x = np.reshape(x, (5, 2))
 ```
 
+See also the tile and repeat functions for additional ways to
+construct larger arrays out of components.
+
 ### Indexing and slicing
 
 We can index and slice an ndarray just like we index and slice a
@@ -212,20 +215,31 @@ p = np.prod(x, 1)
 But some reducing methods only have the function form:
 
 ```
-q = md.median(x, 1) # there is no x.median(1)
+q = ma.median(x, 1) # there is no x.median(1)
 ```
 
-## Broadcasting
+## Basic arithmetic
 
 The standard arithmetic operators (+, -, *, /, **, %) in Numpy all
 behave in a pointwise (element-wise) fashion.  The most basic use of
-these operators is to combine two ndarray objects with the same shape.
+these operators is to combine two ndarray objects with the same shape:
 
 ```
 x = np.random.normal(size=(4, 2))
 y = np.random.normal(size=(4, 2))
 z = x + y
 ```
+
+Note that these operations all have an in-place version that may
+perform slightly better.
+
+```
+x = np.random.normal(size=(4, 2))
+y = np.random.normal(size=(4, 2))
+x += y
+```
+
+## Broadcasting
 
 Numpy also supports a form of *broadcasting*, allowing objects with
 different shapes to be combined in limited situations.  The most
@@ -331,6 +345,39 @@ y = np.random.normal(size=3)
 r = np.linalg.solve(xtx, y)
 ```
 
+# Sorting
+
+An array can can be sorted in-place with the sort method:
+
+```
+x = np.random.normal(size=10)
+x.sort()
+```
+
+If you want to preserve the original array, you can use the `sort`
+method:
+
+```
+x = np.random.normal(size=10)
+y = np.sort(x)
+```
+
+You can sort multidimensional arrays in-place:
+
+```
+x = np.random.normal(size=(5, 2))
+x.sort(0)
+```
+
+If you want to sort indirectly, use argsort.  After the following code
+is run, x is unchanged, but x[ix] would be identical to the result of
+np.sort(x).
+
+```
+x = np.random.normal(size=10)
+ix = np.argsort(x)
+```
+
 ## References and copies
 
 Slicing operations sometimes result in a reference into the parent
@@ -414,4 +461,78 @@ to share memory with the array it was obtained from:
 x = np.random.normal(size=(3, 2))
 y = x.T
 ```
+
+## Additional topics
+
+* Counting with bincount and unique
+
+* Time, string and object dtypes
+
+* Searching with searchsorted
+
+* Set operations
+
+* Data type reinterpreation with "view"
+
+* Output parameters
+
+* Einstein summation
+
+## Limitations
+
+Numpy is arguably the "best in class" for what it is: an interpreted
+array processing language that uses contiguous blocks of memory to
+store array data.  Compared to other Python array libraries, and
+compared to the array processing in other languages, Numpy is
+exceedingly flexble in terms of the range of data types that it
+supports, its powerful broadcasting and reshaping capabilities, and
+its use of strides and other flexible indexing models to permit
+complex operations with minimal data copying.
+
+However there are some fundamental limitations to the Numpy model, and
+in recent years there has been a lot of interest in devising the next
+generation or successor to Numpy.
+
+There are two main two limitations to Numpy.  One is that since arrays
+are stored in contiguous memory chunks, it cannot easily handle very
+large arrays.  There are various work-arounds, but this is a
+significant problem.
+
+The other major issue is that since the code is executed partially by
+the python interpreter and partially by the Numpy library, it is hard
+to avoid unecessary copies.  For example, when executing the code
+below, a new allocation is made to store the result of x + y, then
+this new allocation is assigned to x.  The original allocation of x
+looses a reference count and can be garbage collected, but it would be
+better to recycle the original memory allocation of x and avoid the
+extra allocation entirely.
+
+```
+x = x + y
+```
+
+A number of powerful tools have been developed to either augment or
+supplant Numpy in numeric data processing.  For example, to address
+the issue of excess copying, the
+[Numexpr](https://github.com/pydata/numexpr) package takes expressions
+written as strings and evaluates them in a virtual machine that can
+apply a variety of accelerations.  For example, by passing "sum(x *
+y)" to the virtual machine, it can be automatically be determined that
+the sum can be calculated in streaming fashion without explicitly
+forming `x * y`.
+
+Other relevant projects include [Numba](http://numba.pydata.org/),
+which uses just-in-time compilation to bypass the Python interpreter,
+[Cython](http://cython.org), which uses an extended Python-like
+language to permit compilation of code to C,
+[Dask](http://dask.pydata.org/en/latest/), which defines array-like
+data containers that can live in either primary memory or on-disk, and
+[Theano](http://deeplearning.net/software/theano/), which generates
+code for doing array processing on GPUs (among other things).
+
+Finally, [bcolz](https://github.com/Blosc/bcolz) is a column-oriented
+compressed data container, [Pytables](http://www.pytables.org) is an
+indexed on-disk data container, and [Pandas](http://pandas.pydata.org)
+is a powerful in-memory toolkit for working with inhomogeneous "data
+frames".
 
