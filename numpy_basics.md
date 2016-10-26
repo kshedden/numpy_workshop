@@ -51,6 +51,13 @@ x = np.zeros((4, 3))
 x = np.zeros((4, 3, 2))
 ```
 
+To determine the shape of an ndarray, use the shape attribute:
+
+```
+x = np.random.normal(size=(3, 2))
+x.shape # returns a tuple (3, 2)
+```
+
 ### Indexing and slicing
 
 We can index and slice an ndarray just like we index and slice a
@@ -77,9 +84,9 @@ z = x[ix]
 ```
 
 We can do elementwise arithmetic using numpy arrays as long as they
-are conformable (or can be broadcast to be conformable, but that is a
-more advanced topic). Note that numerical types are "upcast" (in the
-example below, use `z.dtype` to get the type of z).
+are conformable (or can be broadcast to be conformable, as discussed
+below). Note that numerical types are "upcast" (in the example below,
+use z.dtype to get the type of z).
 
 ```
 y = np.asarray([0, 1, 0, -1, 1, 1, -2], dtype=np.float64)
@@ -90,15 +97,15 @@ Slicing an ndarray with multiple dimensions is straightforward:
 
 ```
 x = np.random.normal(size=(3, 4))
-x[1, :]
-x[1:3, 2:4]
+w = x[1, :]
+z = x[1:3, 2:4]
 ```
 
 ## Functions and methods in Numpy
 
 Some of the functionality of Numpy is implemented as functions, and
-some is implemented as methods.  Some operations are implemented as
-both functions and as methods:
+some of it is implemented as methods.  Some operations are implemented
+as both functions and as methods:
 
 ```
 x = np.random.normal(size=(4, 3))
@@ -135,7 +142,16 @@ n = x.min(1)
 p = x.prod(1)
 ```
 
-These values will all have shape `(4,)`.
+These values all have shape (4,).
+
+Finally, we can reduce the entire array to a scalar:
+
+```
+s = x.sum()
+m = x.max()
+n = x.min()
+p = x.prod()
+```
 
 Many of the reducing methods have function analogues:
 
@@ -146,7 +162,7 @@ n = np.min(x, 1)
 p = np.prod(x, 1)
 ```
 
-Some reducing methods only have the function form:
+But some reducing methods only have the function form:
 
 ```
 q = md.median(x, 1) # there is no x.median(1)
@@ -157,6 +173,12 @@ q = md.median(x, 1) # there is no x.median(1)
 The standard arithmetic operators (+, -, *, /, **, %) in Numpy all
 behave in a pointwise (element-wise) fashion.  The most basic use of
 these operators is to combine two ndarray objects with the same shape.
+
+```
+x = np.random.normal(size=(4, 2))
+y = np.random.normal(size=(4, 2))
+z = x + y
+```
 
 Numpy also supports a form of *broadcasting*, allowing objects with
 different shapes to be combined in limited situations.  The most
@@ -181,7 +203,8 @@ xs = x / x.std(0)[:, None]
 
 Let's try to understand how this works.  The basic rule for
 broadcasting is that two arrays can be combined if their shapes agree
-in their trailing axes.  So the following pairs of shapes agree:
+in their trailing axes.  So the following pairs of shapes agree and
+can be broadcast together:
 
 ```
 (8, 6)        (6,)
@@ -189,7 +212,8 @@ in their trailing axes.  So the following pairs of shapes agree:
 (3, 2, 3)     (2, 3)
 ```
 
-while the following pairs of shapes do not agree:
+while the following pairs of shapes do not agree and cannot be
+broadcast together:
 
 ```
 (8, 6)        (8,)
@@ -212,19 +236,19 @@ the following shapes match:
 In this situation, the axis with extent 1 is replicated to match the
 same axis in the other array.
 
-Now we return to the centering of columns.  If `x` has shape `(m, n)`,
-`x.mean(0)` has shape `(n,)`.  Following the broadcasting rules above,
-arrays of shape `(m, n)` and `(n,)` can be broadcasted.  The effect of
-this is that the values in `x.mean(0)` are subtracted from each row of
-`x`, centering the data by columns.
+Now we return to the centering of columns.  If x has shape (m, n),
+x.mean(0) has shape (n,).  Following the broadcasting rules above,
+arrays of shape (m, n) and (n,) can be broadcasted.  The effect of
+this is that the values in x.mean(0) are subtracted from each row of
+x, centering the data by columns.
 
 When centering columns as shown above, we centered the data by
-subtracting `x.mean(1)[:, None]` from `x`.  The shape of `x.mean(1)`
-is `(m,)` but this is not broadcastable with `(m, n)` (they do not
-agree in the training dimensions).  The trick here is to add an axis
-of extent 1: `x.mean(1)[:, None]` has shape `(m, 1)`.  The axis with
-length `1` is expanded to length `n` by replicating the values along
-the second dimension.
+subtracting x.mean(1)[:, None] from x.  The shape of x.mean(1) is (m,)
+but this is not broadcastable with (m, n) (they do not agree in the
+training dimensions).  The trick here is to add an axis of extent 1:
+x.mean(1)[:, None] has shape (m, 1).  The axis with length 1 is
+expanded to length n by replicating the values along the second
+dimension.
 
 ## Pointwise functions
 
