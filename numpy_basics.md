@@ -483,13 +483,13 @@ y = x.T
 Numpy is arguably the "best in class" for what it is: an interpreted
 array processing language that uses contiguous blocks of memory to
 store array data.  Compared to other Python array libraries, and
-compared to the array processing in other languages, Numpy is
-exceedingly flexble in terms of the range of data types that it
-supports, its powerful broadcasting and reshaping capabilities, and
+compared to the array processing capabilities in other languages,
+Numpy is exceedingly powerful in terms of the range of data types that
+it supports, its flexible broadcasting and reshaping capabilities, and
 its use of strides and other flexible indexing models to permit
 complex operations with minimal data copying.
 
-However there are some fundamental limitations to the Numpy model, and
+However there are some fundamental limitations to Numpy's design, and
 in recent years there has been a lot of interest in devising the next
 generation or successor to Numpy.
 
@@ -529,7 +529,6 @@ language to permit compilation of code to C,
 data containers that can live in either primary memory or on-disk, and
 [Theano](http://deeplearning.net/software/theano/), which generates
 code for doing array processing on GPUs (among other things).
-
 Finally, [bcolz](https://github.com/Blosc/bcolz) is a column-oriented
 compressed data container, [Pytables](http://www.pytables.org) is an
 indexed on-disk data container, and [Pandas](http://pandas.pydata.org)
