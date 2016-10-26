@@ -12,8 +12,13 @@ def vcor(x, y):
     """
     vcor uses vectorization to calculate many correlation coefficients
 
-    x and y are two-dimensional arrays with the same shape, the result
-    is an array containing the correlation coefficient between
+    Parameters
+    ----------
+    x, y : two ndarray objects with the same shape
+
+    Result
+    ------
+    A vector containing the Pearson correlation coefficients between
     corresponding rows of x and y.
     """
 
