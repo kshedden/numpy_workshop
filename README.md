@@ -1,7 +1,7 @@
 ## CSCAR Numpy workshop
 
-This site contains materials for a [CSCAR](cscar.research.umich.edu)
-workshop on [Numpy](www.numpy.org).
+This site contains materials for a [CSCAR](http://cscar.research.umich.edu)
+workshop on [Numpy](http://www.numpy.org).
 
 ## Installation
 
