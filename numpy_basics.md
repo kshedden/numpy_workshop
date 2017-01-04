@@ -535,26 +535,25 @@ y = x.T
 Numpy is arguably the "best in class" for what it is: an interpreted
 array processing language that uses contiguous blocks of memory to
 store array data.  Compared to other Python array libraries, and
-compared to the array processing capabilities in other languages,
+compared to the array processing capabilities in many other languages,
 Numpy is exceedingly powerful in terms of the range of data types that
 it supports, its flexible broadcasting and reshaping capabilities, and
 its use of strides and other flexible indexing models to permit
 complex operations with minimal data copying and indexing overhead.
 
 However there are some fundamental limitations to Numpy's design, and
-in recent years there has been a lot of interest in devising the next
-generation or successor to Numpy.  Two main limitations of Numpy are
-commonly noted.  One limitation is that since arrays are stored in
-contiguous memory chunks, Numpy cannot easily handle very large
-arrays.  There are various work-arounds to address this, but it is a
-significant problem.
+in recent years there has been a lot of interest in devising the
+successor to Numpy.  Two main limitations of Numpy are commonly noted.
+One limitation is that since arrays are stored in contiguous memory
+chunks, Numpy cannot easily handle very large arrays.  There are
+various work-arounds to address this, but it is a significant issue.
 
 The other major limitation of Numpy's design is that since the code is
 executed partially by the Python interpreter and partially by the
 Numpy library, it is hard to avoid unecessary copies of data.  For
-example, when executing the code below, a new allocation is made to
-store the result of x + y, then this new allocation is assigned to x.
-The original allocation of x looses a reference count and can be
+example, when executing the code below, first a new allocation is made
+to store the result of x + y, then this new allocation is assigned to
+x.  The original allocation of x looses a reference count and can be
 garbage collected, but it would be better to recycle the original
 memory allocation of x and avoid the extra allocation entirely.
 
