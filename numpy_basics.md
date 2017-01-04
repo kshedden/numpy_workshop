@@ -61,7 +61,7 @@ x = np.zeros((4, 3), dtype=np.int32)
 y = np.zeros((4, 3, 2), dtype=np.uint8)
 ```
 
-We can construct an /array with mulitple axes from a literal value
+We can construct an array with mulitple axes from a literal value
 using nested Python lists, but note that since a ndarray is
 rectangular, all the component lists at each level must have the same
 length:
@@ -83,6 +83,80 @@ To determine the data type of an array, use the `dtype` attribute:
 x = np.random.normal(size=(3, 2))
 x.dtype # returns 'float64'
 ```
+### Indexing and slicing
+
+We can index and slice an ndarray just like we index and slice a
+Python list.  Indexing in Python always starts at position 0, and
+slice indices correspond to a half-open interval, i.e. `i:j` returns
+all values in the index set [i, j).
+
+```
+w = x[2]    # the third element of x
+z = x[3:5]  # the 4th and 5th elements of x
+```
+
+We can also index with a "stride", which is an optional third
+component to a slice specifier, e.g.
+
+```
+x = np.arange(10) # [0, 1, 2, ..., 9]
+y = x[::2]        # [0, 2, 4, 6, 8]
+z = x[::-1]       # [9, 8, 7, ..., 0]
+```
+
+Ndarrays support two types of indexing that core Python lists do
+not. We can index with a Boolean array:
+
+```
+ii = np.asarray([False, False, True, False, True, False, False])
+z = x[ii]
+```
+
+We can also index using a list of positions:
+
+```
+ix = np.asarray([0, 3, 3, 5])
+z = x[ix]
+```
+
+Boolean and position-based indexing can be used to select elements
+from an ndarray with some characteristic of interest.  For example, if
+we want to retain only the positive elements of an ndarray, we can use
+either of the following approaches:
+
+```
+z = z[z> 0]
+
+ix = np.flatnonzero(z > 0) # produces an array of indices
+z = z[ix]
+```
+
+Slicing an ndarray with multiple dimensions is straightforward:
+
+```
+x = np.random.normal(size=(3, 4))
+w = x[1, :]     # all of the second row
+z = x[1:3, 2:4] # a 2x2 submatrix
+```
+
+The first of last position in a slice can be omitted, and it defaults
+to the least or greatest possible value.
+
+```
+x = np.random.normal(size=(3, 4))
+w = x[:2, 2:] # a 2x2 submatrix
+```
+
+We can also use boolean and index vectors with multidimensional arrays:
+
+```
+x = np.random.normal(size=(10, 3))
+b = x[:, 0] > 0
+z = x[b, :]
+
+ix = np.flatnonzero(x[:, 0] > 0)
+z = x[ix, :]
+```
 
 ### Combining and reshaping
 
@@ -101,7 +175,7 @@ z = np.concatenate((x, y), axis=1)
 Note that concatenate preserves the number of axes, i.e. in the
 examples above, we combine arrays with two axes, and the result also
 has two axes.  If you want to "stack" ndarray objects to create a new
-object with one more axis than the things being combined, use one of
+object with one more axis than the arrays being combined, use one of
 the stack functions:
 
 ```
@@ -122,63 +196,6 @@ x = np.reshape(x, (5, 2))
 
 See also the tile and repeat functions for additional ways to
 construct larger arrays out of components.
-
-### Indexing and slicing
-
-We can index and slice an ndarray just like we index and slice a
-Python list.  But note that the index positions start at 0, not 1.
-
-```
-w = x[2]
-z = x[3:5]
-```
-
-In addition, an ndarray supports two types of indexing that core
-Python lists do not. We can index with a Boolean array:
-
-```
-ii = np.asarray([False, False, True, False, True, False, False])
-z = x[ii]
-```
-
-We can also index using a list of positions:
-
-```
-ix = np.asarray([0, 3, 3, 5])
-z = x[ix]
-```
-
-Boolean and position-based indexing can be used to select elements
-from an ndarray with some desired characteristic.  For example, if we
-want to retain only the positive elements of an ndarray, we can use
-either of the following approaches:
-
-
-```
-z = z[z> 0]
-
-ix = np.flatnonzero(z > 0)
-z = z[ix]
-```
-
-Slicing an ndarray with multiple dimensions is straightforward:
-
-```
-x = np.random.normal(size=(3, 4))
-w = x[1, :]
-z = x[1:3, 2:4]
-```
-
-We can also use boolean and index vectors with multidimensional arrays:
-
-```
-x = np.random.normal(size=(10, 3))
-b = x[:, 0] > 0
-z = x[b, :]
-
-ix = np.flatnonzero(x[:, 0] > 0)
-z = x[ix, :]
-```
 
 ## Functions and methods in Numpy
 
@@ -272,9 +289,9 @@ x += y
 ## Broadcasting
 
 Numpy also supports a form of *broadcasting*, allowing objects with
-different shapes to be combined in limited situations.  The most
-common use-cases for broadcasting are to center or standardize rows or
-columns of an ndarray.
+different shapes to be combined in limited situations.  One common
+usage for broadcasting is to center or standardize the rows or columns
+of an ndarray.
 
 ```
 x = np.random.normal(size=(100, 5))
@@ -316,8 +333,8 @@ When broadcasting is allowed, the smaller array is repeated to match
 the shape of the larger array.
 
 Broadcasting is allowed in one additional situation not discussed
-above.  If an axis has length 1, it matches anything.  So for example,
-the following shapes match:
+above.  If an axis has length 1, it matches an axis of any length.  So
+for example, the following shapes match:
 
 ```
 (8, 6)   (1, 6)
