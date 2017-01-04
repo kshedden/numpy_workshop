@@ -1,14 +1,16 @@
 ## Numpy data structures
 
-The main numpy data structure is the
+Numpy is a library for working with "array-like" data containers.
+Numpy provides several such containers, but the most useful one by far
+is the
 [ndarray](https://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html),
 which stands for "n-dimensional array".  There are some other data
 structures in Numpy such as the
 [matrix](https://docs.scipy.org/doc/numpy/reference/generated/numpy.matrix.html),
 and the
-[recarray](https://docs.scipy.org/doc/numpy/reference/generated/numpy.recarray.html).
-But these are mainly used in relatively narrow situations.  Here we
-focus only on the widely-useful ndarray data structure.
+[recarray](https://docs.scipy.org/doc/numpy/reference/generated/numpy.recarray.html),
+but these are mainly used in relatively narrow situations.  Here we
+will focus only on the widely-useful ndarray data structure.
 
 First, since numpy is a library we need to import it.
 
@@ -44,10 +46,27 @@ x = np.asarray([4, 1, 5, 4, 7, 3, 0], dtype=np.uint8)
 An ndarray can have multiple axes (dimensions):
 
 ```
-x = np.zeros((4, 3))
+x = np.zeros((4, 3)) # a 4x3 array of double precision zero values
 
-y = np.zeros((4, 3, 2))
+y = np.zeros((4, 3, 2)) # a 4x3x2 array of double precision zero values
+```
 
+Note that above we are omitting the `dtype` parameter, so the data
+type defaults to double precision floating point (`np.float64`).  If
+we want a non-default data type, we need to specify it explicitly:
+
+```
+x = np.zeros((4, 3), dtype=np.int32)
+
+y = np.zeros((4, 3, 2), dtype=np.uint8)
+```
+
+We can construct an /array with mulitple axes from a literal value
+using nested Python lists, but note that since a ndarray is
+rectangular, all the component lists at each level must have the same
+length:
+
+```
 z = np.asarray([[1, 2, 3], [2, 3, 4]])
 ```
 
@@ -56,6 +75,13 @@ To determine the shape of an ndarray, use the shape attribute:
 ```
 x = np.random.normal(size=(3, 2))
 x.shape # returns a tuple (3, 2)
+```
+
+To determine the data type of an array, use the `dtype` attribute:
+
+```
+x = np.random.normal(size=(3, 2))
+x.dtype # returns 'float64'
 ```
 
 ### Combining and reshaping
@@ -542,4 +568,3 @@ compressed data container, [Pytables](http://www.pytables.org) is an
 indexed on-disk data container, and [Pandas](http://pandas.pydata.org)
 is a powerful in-memory toolkit for working with inhomogeneous "data
 frames".
-
