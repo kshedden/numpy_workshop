@@ -480,7 +480,7 @@ throught references), you can make it immutable:
 ```
 x = np.random.normal(size=(5, 4))
 x.flags.writeable = False
-``
+```
 
 ## Internal structure of ndarray objects
 
