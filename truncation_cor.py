@@ -34,19 +34,18 @@ def vcor(x, y):
 # Change this parameter to control the amount of truncation
 t = 1
 
-for n in 5, 10, 20:
+for n in 10, 20:
     for r in np.linspace(0, 0.9, 10):
 
         x = t + np.random.normal(size=(mcrep, n))
         y = t + np.random.normal(size=(mcrep, n))
         y = r*x + np.sqrt(1 - r**2)*y
 
-        b1 = x < 0
-        x[b1] = 0
-        b2 = y < 0
-        y[b2] = 0
+        # Proportion of truncated values
+        p0 = (np.mean(x < 0) + np.mean(y < 0)) / 2
 
-        p0 = (np.mean(b1) + np.mean(b2)) / 2
+        x = np.clip(x, 0, np.inf)
+        y = np.clip(y, 0, np.inf)
 
         r_est = vcor(x, y)
         r_est[np.isnan(r_est)] = 0
