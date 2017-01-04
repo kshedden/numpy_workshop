@@ -474,6 +474,14 @@ y = x[3:8].copy()
 y[3] = 99
 ```
 
+If you have data that should never be changed (either directly or
+throught references), you can make it immutable:
+
+```
+x = np.random.normal(size=(5, 4))
+x.flags.writeable = False
+``
+
 ## Internal structure of ndarray objects
 
 The canonical state of an ndarray is a contiguous block of memory with

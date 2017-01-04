@@ -1,0 +1,12 @@
+import numpy as np
+
+
+
+
+def kmeans(da, k):
+
+    n = da.shape[0]
+
+    np.random.choice(np.arange(n), k)
+
+

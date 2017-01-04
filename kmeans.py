@@ -83,4 +83,6 @@ def test_kmeans():
     mm = (eg[q[:, 0]] == eg[q[:, 1]]) & (gt[q[:, 0]] != gt[q[:, 1]])
     mm = mm.mean()
 
-mm = test_kmeans()
+    print(mm)
+
+test_kmeans()
